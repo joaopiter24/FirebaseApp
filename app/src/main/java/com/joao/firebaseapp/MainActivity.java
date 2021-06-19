@@ -12,18 +12,24 @@ import com.google.firebase.auth.FirebaseAuth;
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth auth = FirebaseAuth.getInstance();
-    private Button btnLogout;
+    private Button btnLogout, btnStorage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         btnLogout = findViewById(R.id.main_btn_logout);
-
+        btnStorage = findViewById(R.id.main_btn_storage);
         btnLogout.setOnClickListener( v -> {
             //Deslogar usuario
             auth.signOut();
             finish();
+        });
+
+        btnStorage.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), StorageActivity.class);
+            startActivity(intent);
         });
 
         TextView  textEmail = findViewById(R.id.main_text_email);

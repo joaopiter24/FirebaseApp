@@ -10,19 +10,24 @@
         android:id="@+id/main_text_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="220dp"
+        android:layout_marginBottom="32dp"
         android:text="Email"
+        app:layout_constraintBottom_toTopOf="@+id/main_text_user"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <Button
         android:id="@+id/main_btn_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginBottom="32dp"
         android:text="Logout"
+        app:layout_constraintBottom_toTopOf="@+id/main_btn_storage"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_text_user" />
 
@@ -30,18 +35,24 @@
         android:id="@+id/main_text_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
+        android:layout_marginBottom="32dp"
         android:text="Nome"
-        app:layout_constraintEnd_toEndOf="@+id/main_text_email"
+        app:layout_constraintBottom_toTopOf="@+id/main_btn_logout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_text_email" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/main_btn_storage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="38dp"
-        android:text="Storage"
-        app:layout_constraintStart_toStartOf="@+id/main_btn_logout"
+        android:layout_marginBottom="8dp"
+        android:text="STORAGE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/main_btn_logout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
