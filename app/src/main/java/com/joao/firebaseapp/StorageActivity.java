@@ -22,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.joao.firebaseapp.model.Upload;
+import com.joao.firebaseapp.util.LoadingDialog;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -71,6 +72,10 @@ public class StorageActivity extends AppCompatActivity {
     }
 
     private void uploadImagamUri() {
+
+        LoadingDialog dialog = new LoadingDialog(this, R.layout.custom_dialog);
+        dialog.startLoadingDialog();
+
         String tipo = getFileExtesion(imageUri);
         //Referencia do arquivo no firebase
         Date d = new Date();
@@ -93,7 +98,12 @@ public class StorageActivity extends AppCompatActivity {
 
                Upload upload = new Upload(id,nome,uri.toString());
                //salvando upLoad no DB
-               refUpload.setValue(upload);
+               refUpload.setValue(upload)
+               .addOnSuccessListener(aVoid -> {
+                   dialog.dismissDialog();
+                   Toast.makeText(getApplicationContext(), "Upload Sucesso!", Toast.LENGTH_SHORT).show();
+                   finish();
+               });
            });
        }).addOnFailureListener(e -> {
            e.printStackTrace();
@@ -106,6 +116,7 @@ public class StorageActivity extends AppCompatActivity {
         ContentResolver cr = getContentResolver();
         return MimeTypeMap.getSingleton().getExtensionFromMimeType(cr.getType(imageUri));
     }
+
     // Resultado da startActivityResult()
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
