@@ -55,7 +55,7 @@ public class StorageActivity extends AppCompatActivity {
                 return;
             }
             if (imageUri != null) {
-                uploadImagamUri();
+                uploadImagemUri();
             } else {
                 uploadImagemByte();
             }
@@ -71,7 +71,7 @@ public class StorageActivity extends AppCompatActivity {
         });
     }
 
-    private void uploadImagamUri() {
+    private void uploadImagemUri() {
 
         LoadingDialog dialog = new LoadingDialog(this, R.layout.custom_dialog);
         dialog.startLoadingDialog();
