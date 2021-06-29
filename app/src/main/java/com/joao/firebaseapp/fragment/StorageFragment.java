@@ -1,7 +1,4 @@
-package com.joao.firebaseapp;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+package com.joao.firebaseapp.fragment;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -10,7 +7,16 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,15 +27,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.joao.firebaseapp.R;
 import com.joao.firebaseapp.model.Upload;
 import com.joao.firebaseapp.util.LoadingDialog;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
-public class StorageActivity extends AppCompatActivity {
-    //Firebase Storage
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class StorageFragment extends Fragment {
+
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private Button btnupload, btnGaleria;
     private ImageView imageView;
@@ -39,19 +48,25 @@ public class StorageActivity extends AppCompatActivity {
     private DatabaseReference database = FirebaseDatabase.getInstance().getReference("uploads");
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_storage);
+    public StorageFragment() {
+        // Required empty public constructor
+    }
 
-        editNome= findViewById(R.id.storage_edit_nome);
-        btnupload = findViewById(R.id.storage_btn_upload);
-        btnGaleria = findViewById(R.id.storage_btn_galeria);
-        imageView = findViewById(R.id.storage_image_cel);
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View layout = inflater.inflate(R.layout.fragment_storage, container, false);
+
+        editNome= layout.findViewById(R.id.storage_edit_nome);
+        btnupload = layout.findViewById(R.id.storage_btn_upload);
+        btnGaleria = layout.findViewById(R.id.storage_btn_galeria);
+        imageView = layout.findViewById(R.id.storage_image_cel);
 
         btnupload.setOnClickListener(v -> {
             if (editNome.getText().toString().isEmpty()){
-                Toast.makeText(this, "Digite um nome para Imagem", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Digite um nome para Imagem", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (imageUri != null) {
@@ -67,13 +82,15 @@ public class StorageActivity extends AppCompatActivity {
             intent.setAction(Intent.ACTION_GET_CONTENT);
             intent.setType("image/*");
             // Inicia uma Activity, e espera o retorno(Foto)
-            startActivityForResult(intent,111);
+            startActivityForResult(intent,112);
         });
+
+        return layout;
     }
 
     private void uploadImagemUri() {
 
-        LoadingDialog dialog = new LoadingDialog(this, R.layout.custom_dialog);
+        LoadingDialog dialog = new LoadingDialog(getActivity(), R.layout.custom_dialog);
         dialog.startLoadingDialog();
 
         String tipo = getFileExtesion(imageUri);
@@ -83,43 +100,47 @@ public class StorageActivity extends AppCompatActivity {
         //Criando Referencia da imagem no Storage
         StorageReference imagemRef = storage.getReference().child("imagens/"+nome+"-"+d.getTime()+"."+tipo);
 
-       imagemRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
-           Toast.makeText(this, "Upload feito com Sucesso ", Toast.LENGTH_SHORT).show();
+        imagemRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
+            Toast.makeText(getActivity(), "Upload feito com Sucesso ", Toast.LENGTH_SHORT).show();
 
-           //Inserir dados da imagem no RealtimeDatabase
+            //Inserir dados da imagem no RealtimeDatabase
 
-           //pegar a url da imagem
-           taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(uri -> {
-              // Inserir no database
+            //pegar a url da imagem
+            taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(uri -> {
+                // Inserir no database
 
-               // Criando refere(database) do (Upload)
-               DatabaseReference refUpload = database.push();
-               String id = refUpload.getKey();
+                // Criando refere(database) do (Upload)
+                DatabaseReference refUpload = database.push();
+                String id = refUpload.getKey();
 
-               Upload upload = new Upload(id,nome,uri.toString());
-               //salvando upLoad no DB
-               refUpload.setValue(upload)
-               .addOnSuccessListener(aVoid -> {
-                   dialog.dismissDialog();
-                   Toast.makeText(getApplicationContext(), "Upload Sucesso!", Toast.LENGTH_SHORT).show();
-                   finish();
-               });
-           });
-       }).addOnFailureListener(e -> {
-           e.printStackTrace();
-       });
+                Upload upload = new Upload(id,nome,uri.toString());
+                //salvando upLoad no DB
+                refUpload.setValue(upload)
+                        .addOnSuccessListener(aVoid -> {
+                            dialog.dismissDialog();
+                            Toast.makeText(getActivity(), "Upload Sucesso!", Toast.LENGTH_SHORT).show();
+
+                            NavController navController = Navigation.findNavController(getActivity(),R.id.nav_host_fragment);
+
+                            //Voltar para fragment incial
+                            navController.navigateUp();
+                        });
+            });
+        }).addOnFailureListener(e -> {
+            e.printStackTrace();
+        });
 
     }
 
     //Retorna o tipo (.png, .jpg) da image,
     private String getFileExtesion(Uri imageUri) {
-        ContentResolver cr = getContentResolver();
+        ContentResolver cr = getActivity().getContentResolver();
         return MimeTypeMap.getSingleton().getExtensionFromMimeType(cr.getType(imageUri));
     }
 
     // Resultado da startActivityResult()
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.e("RESULT", "requestCode: "+ resultCode + ",resultCode: "+ resultCode);
 
@@ -145,21 +166,24 @@ public class StorageActivity extends AppCompatActivity {
 
     //Fazer o upload de uma imagem convertida para bytes
     public void uploadImagemByte(){
-       byte[] data = convertImage2byte(imageView);
-       //Criar uma referencia p/ imagem no Storage
+        byte[] data = convertImage2byte(imageView);
+        //Criar uma referencia p/ imagem no Storage
         StorageReference imageRef = storage.getReference().child("imagens/01.jpeg");
 
         //Realizar o upload da imagem
         imageRef.putBytes(data)
-        .addOnSuccessListener(taskSnapshot -> {
-            Toast.makeText(this, "Upload feito com sucesso", Toast.LENGTH_SHORT).show();
-        })
-        .addOnFailureListener(e -> {
-             e.printStackTrace();
-        });
+                .addOnSuccessListener(taskSnapshot -> {
+                    Toast.makeText(getActivity(), "Upload feito com sucesso", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    e.printStackTrace();
+                });
 
         //storage.getReference().putBytes();
 
     }
+
+
+
 
 }
