@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -44,6 +45,8 @@ public class StorageFragment extends Fragment {
     private ImageView imageView;
     private Uri imageUri=null;
     private EditText editNome;
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+
     // Referência para um Nó RealtTimeDB
     private DatabaseReference database = FirebaseDatabase.getInstance().getReference("uploads");
 
@@ -54,8 +57,10 @@ public class StorageFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        database = FirebaseDatabase.getInstance().getReference("uploads").child(auth.getUid());
+
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_storage, container, false);
 

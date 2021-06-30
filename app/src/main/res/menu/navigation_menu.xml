@@ -10,14 +10,20 @@
         android:id="@+id/nav_menu_lista_imagens"
         android:title="Lista de Imagens"
         >
-
     </item>
 
     <item
         android:id="@+id/nav_menu_cadastro_imagens"
         android:title="Cadastro de Imagens"
         >
-
     </item>
+
+    <group>
+        <item
+            android:checkable="true"
+            android:id="@+id/nav_menu_logout"
+            android:title="Sair"
+            />
+    </group>
 
 </menu>

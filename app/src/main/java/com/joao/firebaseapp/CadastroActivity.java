@@ -11,6 +11,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.joao.firebaseapp.model.User;
 
 public class CadastroActivity extends AppCompatActivity {
 
@@ -19,6 +22,8 @@ public class CadastroActivity extends AppCompatActivity {
 
     //Referência para autenticaçao
     private FirebaseAuth auth = FirebaseAuth.getInstance();
+
+    private DatabaseReference database = FirebaseDatabase.getInstance().getReference("users");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,7 @@ public class CadastroActivity extends AppCompatActivity {
             Toast.makeText(this, "Preencha os campos", Toast.LENGTH_SHORT).show();
             return;
         }
+
         //Criar um usuario com email e senha
         Task<AuthResult> t = auth.createUserWithEmailAndPassword(email, senha);
         t.addOnCompleteListener(task -> {
@@ -60,6 +66,12 @@ public class CadastroActivity extends AppCompatActivity {
        t.addOnSuccessListener(authResult -> {
            //Request para mudar nome do Usuario
            UserProfileChangeRequest update = new UserProfileChangeRequest.Builder().setDisplayName(nome).build();
+
+           // Inserir no database
+           User u = new User(authResult.getUser().getUid(), email,nome);
+           database.child(u.getId()).setValue(u);
+
+
           //Setando nome do usuario
           authResult.getUser().updateProfile(update);
        });
