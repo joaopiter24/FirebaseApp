@@ -4,6 +4,14 @@ import androidx.annotation.Nullable;
 
 public class User {
     private String id, email, nome, photoUrl;
+    private boolean receiveRequest;
+
+    public void getReceiveRequest(boolean b){
+        this.receiveRequest = b;
+    }
+    public boolean setReceiveRequest(){
+        return receiveRequest;
+    }
 
 
     public User(){
@@ -47,4 +55,10 @@ public class User {
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
     }
+
+    public boolean equals(User u){
+        return this.id.equals(u.getId() );
+    }
+
+
 }
