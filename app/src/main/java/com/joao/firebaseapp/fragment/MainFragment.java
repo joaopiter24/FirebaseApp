@@ -24,6 +24,8 @@ import com.joao.firebaseapp.adapter.UserAdapter;
 import com.joao.firebaseapp.model.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -92,58 +94,53 @@ public class MainFragment extends Fragment {
         getUsersDatabase();
     }
 
-    public void getUsersDatabase(){
-        usersRef.addValueEventListener(new ValueEventListener() {
+    public void getUsersDatabase() {
+        // Armazenar usuarios que ja foram solicitados
+        Map<String,User> mapUsersReq = new HashMap<String, User>();
+        requestRef.child(userLogged.getId()).child("send").addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-            listaContatos.clear();
-
-            for(DataSnapshot filho : snapshot.getChildren()){
-                User u = filho.getValue(User.class);
-                // Comparar com u
-                if(!userLogged.equals(u)){
-                    /*if (cont%2==0){
-                        u.setReceiveRequest(true);
-                    }else {
-                        u.setReceiveRequest(false);
-                    }*/
-                    listaContatos.add(u);
+                for (DataSnapshot u : snapshot.getChildren()){
+                    User user = u.getValue(User.class);
+                    // Adicionando usuario no Hashmap
+                    mapUsersReq.put(user.getId(),user);
                 }
 
-            }
-
-            //verifivar quais contatos ja foram adicionados
-            requestRef
-                    .child(userLogged.getId()).child("send").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for(DataSnapshot no_filho : snapshot.getChildren() ){
-                        User usuarioSolicitado = no_filho.getValue(User.class);
-                        for(int i= 0; i< listaContatos.size(); i++){
-                            if(listaContatos.get(i).equals(usuarioSolicitado)){
-                                listaContatos.get(i).setReceiveRequest(true);
+                usersRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        listaContatos.clear();
+                        for (DataSnapshot u : snapshot.getChildren()){
+                            User user = u.getValue(User.class);
+                            if(mapUsersReq.containsKey(user.getId())){
+                                user.setReceiveRequest(true);
+                            }
+                            if(!userLogged.equals(user)){
+                                listaContatos.add(user);
                             }
                         }
+                        userAdapter.notifyDataSetChanged();
                     }
-                    userAdapter.notifyDataSetChanged();
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
-                }
-            });
+                    }
+                });
 
-
-        }
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
+
+
     }
+
+
 
 }
 

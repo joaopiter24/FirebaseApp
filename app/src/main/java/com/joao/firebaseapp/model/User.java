@@ -6,13 +6,13 @@ public class User {
     private String id, email, nome, photoUrl;
     private boolean receiveRequest;
 
-    public void getReceiveRequest(boolean b){
+    public void setReceiveRequest(boolean b){
         this.receiveRequest = b;
     }
-    public boolean setReceiveRequest(){
+
+    public boolean getReceiveRequest(){
         return receiveRequest;
     }
-
 
     public User(){
 

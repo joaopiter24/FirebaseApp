@@ -21,6 +21,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserVH> {
     private ArrayList<User> listaContatos;
     private Context context;
     private ClickAdapterUser listener;
+
     private static final int TIPO_ADICIONAR = 0;
     private static final int TIPO_SOLICITADO = 1;
 
@@ -29,10 +30,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserVH> {
         this.listener = listener;
     }
 
-    public UserAdapter(Context c, ArrayList<User>lista){
+    public UserAdapter(Context c, ArrayList<User> lista){
         this.listaContatos = lista;
         this.context = c;
-
     }
 
     @NonNull
@@ -56,10 +56,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserVH> {
         holder.textEmail.setText( u.getEmail() );
 
         if (!u.getReceiveRequest()){
-            return;
+            // Caso não adicionado -> cria evento de click
+            holder.onClick();
         }
-        // Caso não adicionado -> cria evento de click
-        holder.onClick();
+
     }
 
     @Override
@@ -100,7 +100,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserVH> {
             textEmail = itemView.findViewById(R.id.user_recycler_email);
             imgPhoto = itemView.findViewById(R.id.user_recycler_photo);
             btnAdicionar= itemView.findViewById(R.id.user_recycler_btn_add);
-
 
         }
     }
