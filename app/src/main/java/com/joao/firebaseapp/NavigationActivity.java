@@ -1,12 +1,14 @@
 package com.joao.firebaseapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.GridLayout;
@@ -15,6 +17,8 @@ import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.joao.firebaseapp.util.NotificationService;
+
 
 public class NavigationActivity extends AppCompatActivity {
     private ImageView btnMenu;
@@ -57,7 +61,9 @@ public class NavigationActivity extends AppCompatActivity {
             // juntar navControler com navView(menu)
             NavigationUI.setupWithNavController(navigationView,navController);
 
+            Intent service = new Intent(getApplicationContext(), NotificationService.class);
 
+            getApplicationContext().startService(service);
         });
 
     }

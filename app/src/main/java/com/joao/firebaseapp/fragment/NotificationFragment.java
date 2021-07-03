@@ -18,6 +18,7 @@ import android.widget.EditText;
 
 import com.joao.firebaseapp.NavigationActivity;
 import com.joao.firebaseapp.R;
+import com.joao.firebaseapp.util.NotificationReceive;
 
 import static com.joao.firebaseapp.util.App.CHANNEL_1;
 
@@ -55,6 +56,13 @@ public class NotificationFragment extends Fragment {
                     .setGraph(R.navigation.nav_graph)
                     .setDestination(R.id.nav_menu_lista_imagens)
                     .createPendingIntent();
+
+            Intent broadcastIntent = new Intent(getContext(), NotificationReceive.class);
+            broadcastIntent.putExtra("toast",msg);
+
+            PendingIntent actionIntent = PendingIntent.getBroadcast(
+                    getContext(),0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT
+            );
 
             //Criar notificação
             Notification notification = new NotificationCompat
